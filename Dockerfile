@@ -31,6 +31,6 @@ WORKDIR /user/app
 COPY . .
 RUN npm run build
 
-EXPOSE 8000
+EXPOSE $PORT
 
-CMD [ "npm", "start" ]
+CMD PORT=$PORT npm start
