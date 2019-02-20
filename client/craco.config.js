@@ -8,12 +8,12 @@ const alias = getDirectories(Path.resolve('src')).reduce(
   (prev, curr) => {
     return {
       ...prev,
-      [`@${curr}`]: Path.resolve(__dirname, `src/${curr}`)
+      [`@${curr}`]: Path.resolve(__dirname, `src`, `${curr}`)
     };
   },
   {
-    '@App': Path.resolve(__dirname, 'src/App.tsx'),
-    '@router': Path.resolve(__dirname, 'src/router.tsx')
+    '@App': Path.resolve(__dirname, 'src', 'App.tsx'),
+    '@router': Path.resolve(__dirname, 'src', 'router.tsx')
   }
 );
 
@@ -46,5 +46,5 @@ function getDirectories(source) {
   return Fs.readdirSync(source)
       .map(name => Path.resolve(source, name))
       .filter(isDirectory)
-      .map(path => path.replace(/(.*)src\\/, ''));
+      .map(path => Path.basename(path));
 }
