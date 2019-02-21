@@ -3,6 +3,7 @@ import { Typography } from '@material-ui/core';
 import { RealTimeStationsQuery, RealTimeStationsSubscription } from '@RadioGraphql';
 import * as React from 'react';
 import { StationsHelper } from 'team-radio-shared';
+import { StationControllerContext } from '../StationContext';
 import { StationItemProps } from '../StationItem';
 import { useStyles } from './styles';
 
@@ -35,10 +36,24 @@ const StationList: React.FunctionComponent<CoreProps> = props => {
 
   const { StationItem, onItemClick } = props;
 
+  const { isJoining } = React.useContext(StationControllerContext);
+
   return renderWrapper(items => (
     <>
       {StationsHelper.sortRealTimeStations(items).map(station => (
-        <StationItem key={station.id} station={station} onClick={onItemClick} />
+        <StationItem
+          key={station.id}
+          station={station}
+          onClick={onItemClick}
+          LinkProps={{
+            style: { cursor: isJoining ? 'progress' : 'pointer' },
+            anchorProps: {
+              onClick: e => {
+                if (isJoining) e.preventDefault();
+              }
+            }
+          }}
+        />
       ))}
     </>
   ));

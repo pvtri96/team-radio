@@ -10,7 +10,7 @@ function InternalLink(props: CoreProps): React.ReactElement<CoreProps> {
   const classes = useStyles();
   const { id, href, className, disableTypography, children, style } = props;
   return (
-    <Link to={href} id={id} className={classnames(classes.container, className)} style={style}>
+    <Link to={href} id={id} className={classnames(classes.container, className)} style={style} {...props.anchorProps}>
       {disableTypography ? children : <Typography {...props.TypographyProps}>{props.children}</Typography>}
     </Link>
   );
@@ -24,4 +24,5 @@ export interface Props extends Identifiable, Styleable, Container {
   href: string;
   disableTypography?: boolean;
   TypographyProps?: TypographyProps;
+  anchorProps?: React.AnchorHTMLAttributes<{}>;
 }

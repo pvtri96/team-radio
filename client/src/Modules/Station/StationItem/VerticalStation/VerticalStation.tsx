@@ -7,9 +7,10 @@ import { useStyles } from './styles';
 
 const VerticalStation: React.FunctionComponent<CoreProps> = props => {
   const classes = useStyles();
-  const { station, onClick, id, style, className } = props;
+  const { station, onClick, id, style, className, LinkProps = {} } = props;
+
   return (
-    <InternalLink href={`/station/${station.stationId}`} disableTypography>
+    <InternalLink href={`/station/${station.stationId}`} disableTypography {...LinkProps}>
       <div className={classnames(classes.stationContainer, className)} id={id} style={style} onClick={onClick}>
         <div className={classes.avatarContainer}>
           <img

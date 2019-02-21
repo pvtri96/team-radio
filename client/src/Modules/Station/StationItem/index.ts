@@ -1,4 +1,5 @@
 import { Identifiable, Styleable } from '@Common';
+import { Props as InternalLinkProps } from '@Components/InternalLink/InternalLink';
 import { SimpleStation } from './SimpleStation';
 import { VerticalStation } from './VerticalStation';
 
@@ -15,5 +16,6 @@ export interface StationItemProps extends Identifiable, Styleable {
     onlineCount: number;
     thumbnail?: string;
   };
+  LinkProps?: Partial<InternalLinkProps>;
   onClick?(): void;
 }

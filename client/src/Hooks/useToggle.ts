@@ -14,7 +14,7 @@ export function useToggle(initialState: boolean = false): UseToggleReturnType {
   return [
     state,
     {
-      toggle: () => setState(!state),
+      toggle: () => setState(oldState => !oldState),
       setToggleState: newState => setState(newState),
       toggleOn: () => setState(true),
       toggleOff: () => setState(false)

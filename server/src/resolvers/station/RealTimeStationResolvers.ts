@@ -87,7 +87,7 @@ export class RealTimStationResolver extends BaseStationResolver {
       publishJoinStation(payload);
       return true;
     }
-    throw new BadRequestException('Can not join station');
+    return false;
   }
 
   @Mutation({ description: 'Leave a specific station.' })
@@ -102,6 +102,6 @@ export class RealTimStationResolver extends BaseStationResolver {
       publish(payload);
       return true;
     }
-    throw new BadRequestException('Can not leave station');
+    return false;
   }
 }

@@ -9,6 +9,7 @@ export interface IStationControllerNetworkState {
   onlineUsers: RealTimeStationQuery.OnlineUser[];
   onlineAnonymous: RealTimeStationQuery.OnlineAnonymous[];
   onlineCount: number;
+  isJoining: boolean;
 }
 
 export interface IStationController extends IStationControllerLocalState, IStationControllerNetworkState {
@@ -17,6 +18,7 @@ export interface IStationController extends IStationControllerLocalState, IStati
 
 export const StationControllerContext = React.createContext<IStationController>({
   muted: false,
+  isJoining: false,
   onlineUsers: [],
   onlineAnonymous: [],
   onlineCount: 0,

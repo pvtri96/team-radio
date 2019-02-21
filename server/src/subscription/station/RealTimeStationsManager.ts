@@ -54,7 +54,7 @@ export class RealTimeStationsManager {
     } else {
       if (station.addAnonymousUser(user)) return true;
     }
-    throw new UnprocessedEntityException('User is not permitted to join this station');
+    return false;
   }
 
   public leaveStation(stationId: string, user: User | AnonymousUser): boolean {
@@ -64,6 +64,6 @@ export class RealTimeStationsManager {
     } else {
       if (station.removeAnonymousUser(user)) return true;
     }
-    throw new UnprocessedEntityException('Can not find user in station');
+    return false;
   }
 }

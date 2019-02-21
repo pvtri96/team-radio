@@ -6,10 +6,11 @@ import { StationItemProps } from '..';
 import { useStyles } from './styles';
 
 const SimpleStation: React.FunctionComponent<CoreProps> = props => {
-  const { station, id, style, className } = props;
+  const { station, id, style, className, LinkProps } = props;
   const classes = useStyles();
+
   return (
-    <InternalLink href={`./station/${station.stationId}`} disableTypography>
+    <InternalLink href={`./station/${station.stationId}`} disableTypography {...LinkProps}>
       <div id={id} className={classnames(classes.stationContainer, className)} style={style}>
         <div className={classes.avatarContainer}>
           <img

@@ -21,9 +21,9 @@ const StationPage: React.FunctionComponent<CoreProps> = props => {
     return { stationId: props.match.params.stationId };
   }, [props.match.params.stationId]);
 
-  const { data, loading, error } = RealTimeStationSubscription.useQueryWithSubscription({ variables, suspend: false });
+  const stationIOState = useStationIO(variables);
 
-  useStationIO(variables, data && data.item);
+  const { data, loading, error } = RealTimeStationSubscription.useQueryWithSubscription({ variables, suspend: false });
 
   const stationName = React.useMemo(() => {
     if (!loading && !error) {
@@ -47,7 +47,9 @@ const StationPage: React.FunctionComponent<CoreProps> = props => {
   const { getLayoutProps, Layout } = useStationLayout();
 
   return (
-    <StationControllerContext.Provider value={{ muted, onlineAnonymous, onlineCount, onlineUsers, setMuted }}>
+    <StationControllerContext.Provider
+      value={{ muted, onlineAnonymous, onlineCount, onlineUsers, setMuted, isJoining: stationIOState.isJoining }}
+    >
       <StationPlayerControllerProvider>
         <Layout {...getLayoutProps(stationName)} />
         <StationPlayerPositionContext.Consumer>
