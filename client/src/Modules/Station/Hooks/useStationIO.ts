@@ -1,5 +1,5 @@
 import { useToggle } from '@Hooks';
-import { CurrentUserQuery, JoinStationMutation, LeaveStationMutation, RealTimeStationQuery } from '@RadioGraphql';
+import { JoinStationMutation, LeaveStationMutation, RealTimeStationQuery, RealTimeStationsQuery } from '@RadioGraphql';
 import * as React from 'react';
 
 /**
@@ -12,13 +12,23 @@ export function useStationIO(variables: RealTimeStationQuery.Variables) {
   const joinStation = JoinStationMutation.useMutation({ variables });
   const leaveStation = LeaveStationMutation.useMutation({ variables });
 
+  const allStationsQuery = RealTimeStationsQuery.useQuery({ suspend: false });
+  const stationQuery = RealTimeStationQuery.useQuery({ variables, suspend: false });
+  const shouldJoin = React.useMemo<boolean>(() => {
+    if (allStationsQuery.data && allStationsQuery.data.items && stationQuery.data && stationQuery.data.item) {
+      return true;
+    }
+    return false;
+  }, [allStationsQuery, stationQuery]);
+
   React.useEffect(() => {
+    if (!shouldJoin) return;
     isJoiningAction.toggleOn();
     joinStation().then(isJoiningAction.toggleOff);
     return () => {
       leaveStation();
     };
-  }, [variables.stationId]);
+  }, [variables.stationId, shouldJoin]);
 
   return { isJoining };
 }
