@@ -33,10 +33,13 @@ const StationSongs: React.FunctionComponent<CoreProps> = props => {
     return props.match.params.tab;
   }, [props.match.params.tab]);
 
-  const onTabChanged = React.useCallback<(e: React.ChangeEvent<{}>, value: StationTab) => void>((e, value) => {
-    e.preventDefault();
-    props.history.push(`/station/${props.match.params.stationId}/${value}`);
-  }, []);
+  const onTabChanged = React.useCallback<(e: React.ChangeEvent<{}>, value: StationTab) => void>(
+    (e, value) => {
+      e.preventDefault();
+      props.history.push(`/station/${props.match.params.stationId}/${value}`);
+    },
+    [props.match.params.stationId]
+  );
 
   const { setTabWidth, shouldRenderIcon } = useTabWidth();
   const tabsRef = React.useRef<{ tabsRef: HTMLElement }>(null);

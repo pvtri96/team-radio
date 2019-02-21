@@ -2,6 +2,7 @@ import { Loading } from '@Components';
 import { Typography } from '@material-ui/core';
 import { RealTimeStationsQuery, RealTimeStationsSubscription } from '@RadioGraphql';
 import * as React from 'react';
+import FlipMove from 'react-flip-move';
 import { StationsHelper } from 'team-radio-shared';
 import { StationControllerContext } from '../StationContext';
 import { StationItemProps } from '../StationItem';
@@ -39,23 +40,25 @@ const StationList: React.FunctionComponent<CoreProps> = props => {
   const { isJoining } = React.useContext(StationControllerContext);
 
   return renderWrapper(items => (
-    <>
+    <FlipMove typeName={null}>
       {StationsHelper.sortRealTimeStations(items).map(station => (
-        <StationItem
-          key={station.id}
-          station={station}
-          onClick={onItemClick}
-          LinkProps={{
-            style: { cursor: isJoining ? 'progress' : 'pointer' },
-            anchorProps: {
-              onClick: e => {
-                if (isJoining) e.preventDefault();
+        <div key={station.id}>
+          <StationItem
+            key={station.id}
+            station={station}
+            onClick={onItemClick}
+            LinkProps={{
+              style: { cursor: isJoining ? 'progress' : 'pointer' },
+              anchorProps: {
+                onClick: e => {
+                  if (isJoining) e.preventDefault();
+                }
               }
-            }
-          }}
-        />
+            }}
+          />
+        </div>
       ))}
-    </>
+    </FlipMove>
   ));
 };
 
