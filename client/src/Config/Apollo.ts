@@ -23,8 +23,7 @@ export function initClient(config: RadioClientConfig) {
   }
 
   const httpLink = HttpLink.createHttpLink({
-    uri: `${protocol}//${hostname}${serverPort}/api`,
-    useGETForQueries: true
+    uri: `${protocol}//${hostname}${serverPort}/api`
   });
 
   const authLink = ContextLink.setContext((_, { headers }) => {

@@ -1,73 +1,29 @@
 import { Loading } from '@Components';
-import { DefaultStationLayoutProps, StationLayout } from '@Containers';
-import { useMutedLocalStorage, useToggle } from '@Hooks';
+import { useMutedLocalStorage } from '@Hooks';
 import {
-  StationChatBox,
   StationControllerContext,
-  StationItem,
-  StationList,
   StationPlayer,
   StationPlayerControllerProvider,
   StationPlayerPositionContext,
-  StationSongs,
-  StationSongSearch,
   StationTab,
-  StationToolbar
+  useStationIO,
+  useStationLayout
 } from '@Modules';
 import { useStyles } from '@Pages/StationPage/styles';
-import {
-  JoinStationMutation,
-  LeaveStationMutation,
-  RealTimeStationQuery,
-  RealTimeStationSubscription
-} from '@RadioGraphql';
+import { RealTimeStationQuery, RealTimeStationSubscription } from '@RadioGraphql';
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 
 const StationPage: React.FunctionComponent<CoreProps> = props => {
   const classes = useStyles();
 
-  const [drawerState, drawerAction] = useToggle(false);
-
-  const Layout = React.useMemo(() => {
-    // TODO: any other layouts?
-    switch (true) {
-      default:
-        return StationLayout.DefaultLayout;
-    }
-  }, []);
-  const getLayoutProps = React.useCallback<(title: React.ReactNode) => DefaultStationLayoutProps>(title => {
-    return {
-      title,
-      stationChatBox: <StationChatBox />,
-      stationSongs: <StationSongs />,
-      stationSongSearch: <StationSongSearch />,
-      toolbar: <StationToolbar />,
-      stations: <StationList StationItem={StationItem.VerticalStation} onItemClick={drawerAction.toggleOff} />,
-      drawer: {
-        open: drawerState,
-        onClose: () => drawerAction.toggleOn(),
-        onOpen: () => drawerAction.toggleOff(),
-        toggle: () => drawerAction.toggle()
-      }
-    };
-  }, []);
-
   const variables = React.useMemo<RealTimeStationQuery.Variables>(() => {
     return { stationId: props.match.params.stationId };
   }, [props.match.params.stationId]);
 
   const { data, loading, error } = RealTimeStationSubscription.useQueryWithSubscription({ variables, suspend: false });
-  const joinStation = JoinStationMutation.useMutation({ variables });
-  const leaveStation = LeaveStationMutation.useMutation({ variables });
 
-  React.useEffect(() => {
-    if (!data) return;
-    joinStation();
-    return () => {
-      leaveStation();
-    };
-  }, [props.match.params.stationId]);
+  useStationIO(variables, data && data.item);
 
   const stationName = React.useMemo(() => {
     if (!loading && !error) {
@@ -87,6 +43,8 @@ const StationPage: React.FunctionComponent<CoreProps> = props => {
   const onlineCount = React.useMemo<number>(() => (data && data.item ? data.item.onlineCount : 0), [data]);
 
   const [muted, setMuted] = useMutedLocalStorage<boolean>(false);
+
+  const { getLayoutProps, Layout } = useStationLayout();
 
   return (
     <StationControllerContext.Provider value={{ muted, onlineAnonymous, onlineCount, onlineUsers, setMuted }}>
