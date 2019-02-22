@@ -12,8 +12,8 @@ export function useStationIO(variables: RealTimeStationQuery.Variables) {
   const joinStation = JoinStationMutation.useMutation({ variables });
   const leaveStation = LeaveStationMutation.useMutation({ variables });
 
-  const allStationsQuery = RealTimeStationsQuery.useQuery({ suspend: false });
-  const stationQuery = RealTimeStationQuery.useQuery({ variables, suspend: false });
+  const allStationsQuery = RealTimeStationsQuery.useQuery({ suspend: false, notifyOnNetworkStatusChange: true });
+  const stationQuery = RealTimeStationQuery.useQuery({ variables, suspend: false, notifyOnNetworkStatusChange: true });
   const shouldJoin = React.useMemo<boolean>(() => {
     if (allStationsQuery.data && allStationsQuery.data.items && stationQuery.data && stationQuery.data.item) {
       return true;

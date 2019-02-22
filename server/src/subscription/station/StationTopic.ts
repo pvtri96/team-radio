@@ -31,6 +31,12 @@ export namespace StationTopic {
   export const ADD_SONG_TO_HISTORY = 'ADD_SONG_TO_HISTORY';
   export interface AddSongToHistory extends StationIdPayload, SongPayload {}
 
+  export const UP_VOTE_SONG = 'UP_VOTE_SONG';
+  export interface UpVoteSongPayload extends StationIdPayload, SongIdPayload {}
+
+  export const DOWN_VOTE_SONG = 'DOWN_VOTE_SONG';
+  export interface DownVoteSongPayload extends StationIdPayload, SongIdPayload {}
+
   export interface StationIdPayload {
     stationId: string;
   }

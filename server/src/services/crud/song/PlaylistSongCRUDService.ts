@@ -50,6 +50,21 @@ export class PlaylistSongCRUDService extends SongCRUDService {
     return PlaylistSong.fromSong(song);
   }
 
+  public async updateUpVotes(id: string, upVotes: string[]): Promise<PlaylistSong> {
+    const song = await super.updateUpVotes(id, upVotes);
+    return PlaylistSong.fromSong(song);
+  }
+
+  public async updateDownVotes(id: string, downVotes: string[]): Promise<PlaylistSong> {
+    const song = await super.updateDownVotes(id, downVotes);
+    return PlaylistSong.fromSong(song);
+  }
+
+  public async updateVotes(id: string, upVotes: string[], downVotes: string[]): Promise<PlaylistSong> {
+    const song = await super.updateVotes(id, upVotes, downVotes);
+    return PlaylistSong.fromSong(song);
+  }
+
   public async delete(id: string): Promise<PlaylistSong> {
     const song = await super.delete(id);
     return PlaylistSong.fromSong(song);

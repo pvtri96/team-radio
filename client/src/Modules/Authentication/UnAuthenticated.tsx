@@ -10,7 +10,10 @@ const UnAuthenticated: React.FunctionComponent<CoreProps> = props => {
   const { children, redirect, redirectMessage, disableLoading, history } = props;
 
   const toastContext = React.useContext(ToastContext);
-  const { data, loading, error } = useQuery(CurrentUserQuery.QUERY, { suspend: false });
+  const { data, loading, error } = useQuery(CurrentUserQuery.QUERY, {
+    suspend: false,
+    notifyOnNetworkStatusChange: true
+  });
 
   React.useLayoutEffect(() => {
     if (data && data.currentUser) {

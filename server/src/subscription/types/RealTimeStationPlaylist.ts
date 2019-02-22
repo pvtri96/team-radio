@@ -14,12 +14,12 @@ export class RealTimeStationPlaylist {
   public currentPlayingSongId: string | null = null;
 
   static fromRealTimeStationPlayerManager(manager: RealTimeStationPlayerManager): RealTimeStationPlaylist {
-    const player = new RealTimeStationPlaylist();
-    player.playlist = manager.playlist;
-    player.currentlyPlayingAt = manager.getCurrentlyPlayingAt();
+    const instance = new RealTimeStationPlaylist();
+    instance.playlist = manager.playlist;
+    instance.currentlyPlayingAt = manager.getCurrentlyPlayingAt();
     if (manager.playing) {
-      player.currentPlayingSongId = manager.playing.song.id;
+      instance.currentPlayingSongId = manager.playing.song.id;
     }
-    return player;
+    return instance;
   }
 }

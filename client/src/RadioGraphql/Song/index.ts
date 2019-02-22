@@ -1,4 +1,6 @@
 import * as AddSongMutation from './AddSongMutation';
+import * as DownVoteSongMutation from './DownVoteSongMutation';
 import * as ReportUnavailableSongMutation from './ReportUnavailableSongMutation';
+import * as UpVoteSongMutation from './UpVoteSongMutation';
 
-export { AddSongMutation, ReportUnavailableSongMutation };
+export { UpVoteSongMutation, DownVoteSongMutation, AddSongMutation, ReportUnavailableSongMutation };

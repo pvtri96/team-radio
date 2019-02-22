@@ -100,6 +100,25 @@ export class SongCRUDService extends BaseCRUDService {
     return this.songRepository.saveOrFail(song);
   }
 
+  public async updateUpVotes(id: string, upVotes: string[]): Promise<Song> {
+    const song = await this.songRepository.findOneOrFail(id);
+    song.upVotes = upVotes;
+    return this.songRepository.saveOrFail(song);
+  }
+
+  public async updateDownVotes(id: string, downVotes: string[]): Promise<Song> {
+    const song = await this.songRepository.findOneOrFail(id);
+    song.downVotes = downVotes;
+    return this.songRepository.saveOrFail(song);
+  }
+
+  public async updateVotes(id: string, upVotes: string[], downVotes: string[]): Promise<Song> {
+    const song = await this.songRepository.findOneOrFail(id);
+    song.upVotes = upVotes;
+    song.downVotes = downVotes;
+    return this.songRepository.saveOrFail(song);
+  }
+
   public async delete(id: string): Promise<Song> {
     const song = await this.songRepository.findOneOrFail(id);
     await this.songRepository.remove(song);

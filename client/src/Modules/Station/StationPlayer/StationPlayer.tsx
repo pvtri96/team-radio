@@ -38,7 +38,7 @@ const StationPlayer: React.FunctionComponent<CoreProps> = props => {
       if (error) {
         console.error(error);
         // Error
-        content = <Typography color={'error'}>Error {error.message}</Typography>;
+        content = <Typography color={'error'}>{error.message}</Typography>;
       } else if (loading) {
         // Loading
         content = <Loading />;

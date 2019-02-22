@@ -24,13 +24,14 @@ const HistoryList: React.FunctionComponent<CoreProps> = props => {
   const { error, loading, data } = RealTimeStationDistinctHistorySongQuery.useQuery({
     suspend: false,
     variables: params,
-    fetchPolicy: 'cache-and-network'
+    fetchPolicy: 'cache-and-network',
+    notifyOnNetworkStatusChange: true
   });
 
   const authenticated = useAuthenticated();
 
   const content = React.useMemo(() => {
-    if (error) return <Typography color={'error'}>Error {error.message}</Typography>;
+    if (error) return <Typography color={'error'}>{error.message}</Typography>;
     if (!data || (loading && data && !data.items)) return <Loading />;
     return (
       <List className={classnames(classes.listContainer, className)} style={style}>

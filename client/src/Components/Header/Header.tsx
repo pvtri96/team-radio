@@ -30,7 +30,7 @@ const Header: React.FunctionComponent<CoreProps> = props => {
     setAnchorEl(null);
   }, []);
 
-  const userQuery = CurrentUserQuery.useQuery({ suspend: false });
+  const userQuery = CurrentUserQuery.useQuery({ suspend: false, notifyOnNetworkStatusChange: true });
 
   const menu = React.useMemo(() => {
     const { loading, error, data } = userQuery;

@@ -23,7 +23,11 @@ const StationPage: React.FunctionComponent<CoreProps> = props => {
 
   const stationIOState = useStationIO(variables);
 
-  const { data, loading, error } = RealTimeStationSubscription.useQueryWithSubscription({ variables, suspend: false });
+  const { data, loading, error } = RealTimeStationSubscription.useQueryWithSubscription({
+    variables,
+    suspend: false,
+    notifyOnNetworkStatusChange: true
+  });
 
   const stationName = React.useMemo(() => {
     if (!loading && !error) {

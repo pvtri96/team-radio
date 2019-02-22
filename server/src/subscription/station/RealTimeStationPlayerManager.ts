@@ -1,8 +1,8 @@
 import { DataAccess } from 'config';
-import { PlaylistSong, UnavailableSongStatus } from 'entities';
+import { PlaylistSong, UnavailableSongStatus, User } from 'entities';
 import { Exception } from 'exceptions';
 import { DistinctSongRepository, SongRepository, UserRepository } from 'repositories';
-import { Logger, SongCRUDService, UnavailableSongService } from 'services';
+import { Logger, PlaylistSongCRUDService, SongCRUDService, UnavailableSongService } from 'services';
 import { PlaylistHelper } from 'team-radio-shared';
 import { Container } from 'typedi';
 import { RealTimeStationManager, StationTopic } from '.';
@@ -12,7 +12,7 @@ import { sleep } from 'utils';
 export class RealTimeStationPlayerManager {
   private _playlist: PlaylistSong[] = [];
 
-  private stationTimeout: NodeJS.Timer;
+  private stationTimeout: NodeJS.Timeout | null;
 
   public parent: RealTimeStationManager;
 
@@ -25,6 +25,8 @@ export class RealTimeStationPlayerManager {
   }
 
   public playing: PlayingSong | null = null;
+
+  public isSleepingBetweenSongs: boolean = false;
 
   public getCurrentlyPlayingAt(playingSong?: PlayingSong): number | null {
     const playing = playingSong || this.playing;
@@ -43,7 +45,7 @@ export class RealTimeStationPlayerManager {
       this.playing = this.pickPlayingSong();
 
       // In normal case, start the player base on playing value
-      clearTimeout(this.stationTimeout);
+      this.clearPlayerTimeout();
       // start the next song timeout with song duration
       let timeout = this.playing.song.duration;
       // Then calculate the actual remain time of the song
@@ -79,7 +81,7 @@ export class RealTimeStationPlayerManager {
       song: null
     });
     // Clear the player timeout
-    clearTimeout(this.stationTimeout);
+    this.clearPlayerTimeout();
     // Then update station & player state
     await Promise.all([
       this.updateStationState(null),
@@ -102,7 +104,9 @@ export class RealTimeStationPlayerManager {
     // Or if the playlist already has a song,
     // pending in 5 seconds
     else {
+      this.isSleepingBetweenSongs = true;
       await sleep(5000);
+      this.isSleepingBetweenSongs = false;
       await this.start();
     }
   }
@@ -113,7 +117,7 @@ export class RealTimeStationPlayerManager {
   }
 
   public async stop() {
-    clearTimeout(this.stationTimeout);
+    this.clearPlayerTimeout();
     const stoppedSong = await this.shiftSong();
     this.playing = null;
     stoppedSong.isPlayed = true;
@@ -125,6 +129,32 @@ export class RealTimeStationPlayerManager {
     await this.parent.publish<StationTopic.UpdatePlayerSongPayLoad>(StationTopic.UPDATE_PLAYER_SONG, {
       song: null
     });
+  }
+
+  public async upVoteSong(songId: string, user: User): Promise<boolean> {
+    const song = this._playlist.find(song => song.id === songId);
+    if (!song) return false;
+    song.downVotes = song.downVotes.filter(userId => userId !== user.id);
+    if (song.upVotes.find(userId => userId === user.id)) {
+      song.upVotes = song.upVotes.filter(userId => userId !== user.id);
+    } else {
+      song.upVotes = [...song.upVotes, user.id];
+    }
+    await this.playlistSongCRUDService.updateVotes(songId, song.upVotes, song.downVotes);
+    return true;
+  }
+
+  public async downVoteSong(songId: string, user: User): Promise<boolean> {
+    const song = this._playlist.find(song => song.id === songId);
+    if (!song) return false;
+    song.upVotes = song.upVotes.filter(userId => userId !== user.id);
+    if (song.downVotes.find(userId => userId === user.id)) {
+      song.downVotes = song.downVotes.filter(userId => userId !== user.id);
+    } else {
+      song.downVotes = [...song.downVotes, user.id];
+    }
+    await this.playlistSongCRUDService.updateVotes(songId, song.upVotes, song.downVotes);
+    return true;
   }
 
   private async nextByPickingRandomSong(): Promise<void> {
@@ -191,6 +221,13 @@ export class RealTimeStationPlayerManager {
     return this.parent.updateStationState(startingTime, currentPlayingSongId);
   }
 
+  private clearPlayerTimeout() {
+    if (this.stationTimeout) {
+      clearTimeout(this.stationTimeout);
+      this.stationTimeout = null;
+    }
+  }
+
   private get songRepository(): SongRepository {
     return Container.get(DataAccess).connection.getCustomRepository(SongRepository);
   }
@@ -205,6 +242,10 @@ export class RealTimeStationPlayerManager {
 
   private get songCRUDService(): SongCRUDService {
     return Container.get(SongCRUDService);
+  }
+
+  private get playlistSongCRUDService(): PlaylistSongCRUDService {
+    return Container.get(PlaylistSongCRUDService);
   }
 
   private get unavailableSongService(): UnavailableSongService {

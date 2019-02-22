@@ -10,7 +10,10 @@ const Authenticated: React.FunctionComponent<CoreProps> = props => {
   const { render, children, redirect, redirectMessage, disableLoading, history } = props;
 
   const toastContext = React.useContext(ToastContext);
-  const { error, loading, data } = useQuery(CurrentUserQuery.QUERY, { suspend: false });
+  const { error, loading, data } = useQuery(CurrentUserQuery.QUERY, {
+    suspend: false,
+    notifyOnNetworkStatusChange: true
+  });
 
   React.useLayoutEffect(() => {
     if (error) {
@@ -60,7 +63,7 @@ export function withAuthenticated<TProps>(redirect: string, message?: string) {
 }
 
 export function useAuthenticated(): boolean {
-  const { error, loading } = useQuery(CurrentUserQuery.QUERY, { suspend: false });
+  const { error, loading } = CurrentUserQuery.useQuery({ suspend: false });
   if (error || loading) return false;
   return true;
 }

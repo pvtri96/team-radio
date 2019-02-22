@@ -158,7 +158,7 @@ export class RealTimeStationManager extends Station {
   protected onUserChanged(oldOnlineCount: number) {
     // Start player if there is a user join to the station and there is at least 1 song in the playlist
     if (oldOnlineCount === 0 && this.onlineCount > 0) {
-      if (!this.player.playing && this.player.playlist.length > 0) {
+      if (!this.player.playing && this.player.playlist.length > 0 && !this.player.isSleepingBetweenSongs) {
         setTimeout(this.startPlayer.bind(this), 5000);
       }
     }
@@ -170,7 +170,7 @@ export class RealTimeStationManager extends Station {
       // Check if the song is already in the list
       if (!this.player.playlist.some(song => song.id === payload.song.id)) {
         this.player.playlist = [...this.player.playlist, PlaylistSong.fromSong(payload.song)];
-        if (!this.player.playing) {
+        if (!this.player.playing && !this.player.isSleepingBetweenSongs) {
           await this.publish<StationTopic.UpdatePlayerSongPayLoad>(StationTopic.UPDATE_PLAYER_SONG, { song: null });
           setTimeout(this.startPlayer.bind(this), 5000);
         }

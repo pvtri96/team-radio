@@ -11,8 +11,8 @@ export const useStyles = makeStyles(({ palette, spacing, typography }: Theme) =>
     marginBottom: 1
   },
   badge: {
-    top: -2,
-    right: 14,
+    top: 8,
+    right: -10,
     background: 'inherit',
     color: palette.text.primary
   },

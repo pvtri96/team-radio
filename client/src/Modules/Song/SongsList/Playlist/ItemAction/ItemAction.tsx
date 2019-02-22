@@ -1,7 +1,15 @@
+import { ErrorHelper } from '@Error';
+import { useToggle } from '@Hooks';
 import { Badge, Grid, IconButton, LinearProgress } from '@material-ui/core';
-import { Authenticated } from '@Modules';
+import { Authenticated, ToastContext, ToastSeverity } from '@Modules';
+import { MutationFn } from 'react-apollo-hooks/lib/useMutation';
 import { useAuthenticated } from '@Modules/Authentication/Authenticated';
-import { RealTimeStationPlaylistQuery } from '@RadioGraphql';
+import {
+  CurrentUserQuery,
+  DownVoteSongMutation,
+  RealTimeStationPlaylistQuery,
+  UpVoteSongMutation
+} from '@RadioGraphql';
 import { classnames } from '@Themes';
 import * as React from 'react';
 import { MdFavorite, MdThumbDown, MdThumbUp } from 'react-icons/md';
@@ -11,6 +19,10 @@ const PlaylistItemAction: React.FunctionComponent<CoreProps> = props => {
   const classes = useStyles();
   const { song, currentPlayingSongId } = props;
 
+  const [isMutating, isMutatingAction] = useToggle(false);
+
+  const toastContext = React.useContext(ToastContext);
+
   const voteRating = React.useMemo<number>(() => {
     const upVotes = song.upVotes.length;
     const downVotes = song.downVotes.length;
@@ -18,21 +30,49 @@ const PlaylistItemAction: React.FunctionComponent<CoreProps> = props => {
     return (upVotes / (upVotes + downVotes)) * 100;
   }, [song.upVotes, song.downVotes]);
 
-  const authenticated = useAuthenticated();
-  if (!authenticated) return null;
+  const upVote = UpVoteSongMutation.useMutation({ variables: { songId: props.song.id } });
+  const downVote = DownVoteSongMutation.useMutation({ variables: { songId: props.song.id } });
+
+  const getOnClickCallback = React.useCallback(
+    (fn: MutationFn<any, any>) => async () => {
+      try {
+        isMutatingAction.toggleOn();
+        await fn();
+        isMutatingAction.toggleOff();
+      } catch (e) {
+        const gqlError = ErrorHelper.extractError(e);
+        if (gqlError) toastContext.add({ message: gqlError.message, severity: ToastSeverity.ERROR });
+      }
+    },
+    []
+  );
+
+  const { error, loading, data } = CurrentUserQuery.useQuery({ suspend: false });
+
+  if (error || loading || !data) return null;
 
   return (
     <Grid container>
       <div>
         <Grid container>
           <Grid item xs={12}>
-            <IconButton className={classes.iconButton}>
-              <Badge badgeContent={song.upVotes.length} color={'primary'} classes={{ badge: classes.badge }}>
+            <IconButton
+              disabled={isMutating}
+              className={classes.iconButton}
+              onClick={getOnClickCallback(upVote)}
+              color={song.upVotes.includes(data.currentUser.id) ? 'primary' : undefined}
+            >
+              <Badge badgeContent={`${song.upVotes.length}`} color={'primary'} classes={{ badge: classes.badge }}>
                 <MdThumbUp />
               </Badge>
             </IconButton>
-            <IconButton className={classes.iconButton}>
-              <Badge badgeContent={song.downVotes.length} color={'primary'} classes={{ badge: classes.badge }}>
+            <IconButton
+              disabled={isMutating}
+              className={classes.iconButton}
+              onClick={getOnClickCallback(downVote)}
+              color={song.downVotes.includes(data.currentUser.id) ? 'primary' : undefined}
+            >
+              <Badge badgeContent={`${song.downVotes.length}`} color={'primary'} classes={{ badge: classes.badge }}>
                 <MdThumbDown />
               </Badge>
             </IconButton>

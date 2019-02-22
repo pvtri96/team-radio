@@ -8,6 +8,7 @@ import { RealTimeStationPlaylistQuery, RealTimeStationPlaylistSubscription } fro
 import { classnames } from '@Themes';
 import * as React from 'react';
 import FlipMove from 'react-flip-move';
+import { PlaylistHelper } from 'team-radio-shared/build';
 import { ItemAction } from './ItemAction';
 import { useStyles } from './styles';
 
@@ -25,7 +26,8 @@ const Playlist: React.FunctionComponent<CoreProps> = props => {
   const { data, error, loading } = RealTimeStationPlaylistSubscription.useQueryWithSubscription({
     variables: params,
     fetchPolicy: 'network-only',
-    suspend: false
+    suspend: false,
+    notifyOnNetworkStatusChange: true
   });
 
   const renderPlaylistWrapper = React.useCallback(
@@ -33,7 +35,7 @@ const Playlist: React.FunctionComponent<CoreProps> = props => {
       let content: React.ReactElement<{}> | null = null;
       if (error) {
         // Error
-        content = <Typography color={'error'}>Error {error.message}</Typography>;
+        content = <Typography color={'error'}>{error.message}</Typography>;
       } else if (loading) {
         // Loading
         content = <Loading />;
@@ -57,7 +59,7 @@ const Playlist: React.FunctionComponent<CoreProps> = props => {
   return renderPlaylistWrapper(({ playlist, currentPlayingSongId }) => (
     <List className={classnames(classes.listContainer, className)} style={style}>
       <FlipMove typeName={null}>
-        {playlist.map(song => (
+        {PlaylistHelper.sortPlaylist(playlist, currentPlayingSongId).map(song => (
           <div key={song.id}>
             <SongItem.SimpleSong
               song={song}
