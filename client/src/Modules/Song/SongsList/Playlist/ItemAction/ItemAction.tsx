@@ -3,7 +3,6 @@ import { useToggle } from '@Hooks';
 import { Badge, Grid, IconButton, LinearProgress } from '@material-ui/core';
 import { Authenticated, ToastContext, ToastSeverity } from '@Modules';
 import { MutationFn } from 'react-apollo-hooks/lib/useMutation';
-import { useAuthenticated } from '@Modules/Authentication/Authenticated';
 import {
   CurrentUserQuery,
   DownVoteSongMutation,

@@ -18,22 +18,25 @@ export function useStationLayout() {
         return StationLayout.DefaultLayout;
     }
   }, []);
-  const getLayoutProps = React.useCallback<(title: React.ReactNode) => DefaultStationLayoutProps>(title => {
-    return {
-      title,
-      stationChatBox: <StationChatBox />,
-      stationSongs: <StationSongs />,
-      stationSongSearch: <StationSongSearch />,
-      toolbar: <StationToolbar />,
-      stations: <StationList StationItem={StationItem.VerticalStation} onItemClick={drawerAction.toggleOff} />,
-      drawer: {
-        open: drawerState,
-        onClose: () => drawerAction.toggleOn(),
-        onOpen: () => drawerAction.toggleOff(),
-        toggle: () => drawerAction.toggle()
-      }
-    };
-  }, []);
+  const getLayoutProps = React.useCallback<(title: React.ReactNode) => DefaultStationLayoutProps>(
+    title => {
+      return {
+        title,
+        stationChatBox: <StationChatBox />,
+        stationSongs: <StationSongs />,
+        stationSongSearch: <StationSongSearch />,
+        toolbar: <StationToolbar />,
+        stations: <StationList StationItem={StationItem.VerticalStation} onItemClick={drawerAction.toggleOff} />,
+        drawer: {
+          open: drawerState,
+          onClose: () => drawerAction.toggleOff(),
+          onOpen: () => drawerAction.toggleOn(),
+          toggle: () => drawerAction.toggle()
+        }
+      };
+    },
+    [drawerState]
+  );
 
   return {
     Layout,

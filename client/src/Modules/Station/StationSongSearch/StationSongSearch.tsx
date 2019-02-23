@@ -71,7 +71,6 @@ const StationSongSearch: React.FunctionComponent<CoreProps> = props => {
           onChange={e => setUrl(e.target.value)}
           inputRef={inputRef}
           helperText={error}
-          autoFocus
         />
         <GradientButton variant={'contained'} className={classes.button} onClick={submit} disabled={loading}>
           {loading ? <Loading color={'inherit'} size={16} className={classes.loadingContainer} /> : 'Submit'}

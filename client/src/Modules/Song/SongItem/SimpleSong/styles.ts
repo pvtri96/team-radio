@@ -2,7 +2,7 @@ import { Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { ThemeType } from '@Themes';
 
-export const useStyles = makeStyles(({ palette, spacing }: Theme) => ({
+export const useStyles = makeStyles(({ palette, spacing, breakpoints }: Theme) => ({
   container: {
     width: '100%',
     height: 64
@@ -10,6 +10,12 @@ export const useStyles = makeStyles(({ palette, spacing }: Theme) => ({
   listItem: {
     paddingTop: 0,
     paddingBottom: 0
+  },
+  listItemRoot: {
+    [breakpoints.down('lg')]: {
+      paddingLeft: spacing.unit,
+      paddingRight: spacing.unit
+    }
   },
   playing: {
     background: palette.type === ThemeType.DARK ? palette.grey[900] : palette.grey[200]
@@ -20,7 +26,11 @@ export const useStyles = makeStyles(({ palette, spacing }: Theme) => ({
   thumbnail: {
     borderRadius: 0,
     width: 80,
-    height: 56
+    height: 56,
+    [breakpoints.down('lg')]: {
+      width: 64,
+      height: 56
+    }
   },
   thumbnailDuration: {
     position: 'absolute',
@@ -51,5 +61,12 @@ export const useStyles = makeStyles(({ palette, spacing }: Theme) => ({
     height: 20,
     fontSize: 12,
     color: palette.common.white
+  },
+  actions: {
+    [breakpoints.down('lg')]: {
+      top: 'auto',
+      transform: 'none',
+      bottom: spacing.unit
+    }
   }
 }));

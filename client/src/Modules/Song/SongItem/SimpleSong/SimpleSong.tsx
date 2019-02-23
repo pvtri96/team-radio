@@ -39,7 +39,7 @@ const SimpleSong: React.FunctionComponent<CoreProps> = props => {
     <ListItem
       id={id}
       className={classnames(props.className, classes.container, { [classes.playing]: playing })}
-      classes={{ default: classes.listItem }}
+      classes={{ default: classes.listItem, root: classes.listItemRoot }}
       dense
     >
       <div className={classes.thumbnailContainer}>
@@ -58,7 +58,7 @@ const SimpleSong: React.FunctionComponent<CoreProps> = props => {
         className={classnames(classes.text, textClassName)}
         classes={{ primary: classes.primaryText, secondary: classes.secondaryText }}
       />
-      {actions && <ListItemSecondaryAction>{actions}</ListItemSecondaryAction>}
+      {actions && <ListItemSecondaryAction className={classes.actions}>{actions}</ListItemSecondaryAction>}
     </ListItem>
   );
 };

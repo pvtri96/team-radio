@@ -95,24 +95,31 @@ const DefaultLayout: React.FunctionComponent<CoreProps> = props => {
             {stations}
             {homeLink}
           </Drawer>
-          <Grid container spacing={16} className={classes.container}>
-            <Grid item xs={7} className={classes.fullHeight}>
-              <Grid container spacing={16} className={classes.fullHeight}>
-                <Grid item xs={12} className={classes.searchBoxOtherLayout}>
+          <Grid container spacing={8} className={classes.container}>
+            <Grid item xs={6} className={classes.fullHeight}>
+              <Grid container spacing={8} className={classes.fullHeight}>
+                <Grid item xs={12} className={classes.fullHeight}>
                   <StationPlayerControllerContainer />
-                </Grid>
-                <Grid item xs={12} className={classes.searchBoxLayout}>
-                  {stationSongSearch}
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={5} className={classes.fullHeight}>
-              <Grid container spacing={16} className={classes.fullHeight}>
-                <Grid item xs={12} className={classes.halfHeight}>
-                  {stationSongs}
-                </Grid>
-                <Grid item xs={12} className={classes.halfHeight}>
-                  {stationChatBox}
+            <Grid item xs={6} className={classes.fullHeight}>
+              <Grid container spacing={8} className={classes.fullHeight}>
+                <Responsive.Query minWidth={992} maxWidth={1200}>
+                  <Grid item xs={12} className={classes.searchBoxOtherLayout}>
+                    {stationSongs}
+                  </Grid>
+                </Responsive.Query>
+                <Responsive.Query minWidth={1200}>
+                  <Grid item xs={6} className={classes.searchBoxOtherLayout}>
+                    {stationSongs}
+                  </Grid>
+                  <Grid item xs={6} className={classes.searchBoxOtherLayout}>
+                    {stationChatBox}
+                  </Grid>
+                </Responsive.Query>
+                <Grid item xs={12} className={classes.searchBoxLayout}>
+                  {stationSongSearch}
                 </Grid>
               </Grid>
             </Grid>
