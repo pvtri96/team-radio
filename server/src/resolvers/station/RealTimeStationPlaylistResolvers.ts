@@ -3,7 +3,7 @@ import { Song } from 'entities';
 import { NotInStationBadRequestException } from 'exceptions';
 import { SongCRUDService } from 'services';
 import { RealTimeStationPlaylist, RealTimeStationsManager, StationTopic } from 'subscription';
-import { Arg, Authorized, Ctx, Mutation, Publisher, PubSub, Query, Resolver, Subscription } from 'type-graphql';
+import { Arg, Authorized, Ctx, Mutation, Publisher, PubSub, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { Inject } from 'typedi';
 import { BaseResolver } from '../BaseResolver';
 
@@ -79,12 +79,23 @@ export class RealTimeStationPlaylistResolver extends BaseResolver<RealTimeStatio
       StationTopic.REMOVE_PLAYLIST_SONG,
       StationTopic.UPDATE_PLAYER_SONG,
       StationTopic.UP_VOTE_SONG,
-      StationTopic.DOWN_VOTE_SONG
+      StationTopic.DOWN_VOTE_SONG,
+      StationTopic.SKIP_PLAYER_SONG
     ],
     filter: ({ args, payload }) => payload.stationId === args.stationId,
     description: 'Subscribe to changes on station player manager like: add song, remove song, update song,...'
   })
-  public subscribeStationPlaylist(@Arg('stationId') stationId: string): RealTimeStationPlaylist {
-    return RealTimeStationPlaylist.fromRealTimeStationPlayerManager(this.manager.findStation(stationId).player);
+  public subscribeStationPlaylist(
+    @Root() payload: StationTopic.SkipPlayerSongPayLoad | unknown,
+    @Arg('stationId') stationId: string
+  ): RealTimeStationPlaylist {
+    let currentPlayingSongId: string | undefined = undefined;
+    if ((payload as StationTopic.SkipPlayerSongPayLoad).isSkipping) {
+      currentPlayingSongId = (payload as StationTopic.SkipPlayerSongPayLoad).songId;
+    }
+    return RealTimeStationPlaylist.fromRealTimeStationPlayerManager(
+      this.manager.findStation(stationId).player,
+      currentPlayingSongId
+    );
   }
 }

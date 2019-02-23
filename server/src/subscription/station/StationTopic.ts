@@ -22,6 +22,11 @@ export namespace StationTopic {
     song: Song | null;
   }
 
+  export const SKIP_PLAYER_SONG = 'SKIP_PLAYER_SONG';
+  export interface SkipPlayerSongPayLoad extends StationIdPayload, SongIdPayload {
+    isSkipping: boolean;
+  }
+
   export const ADD_PLAYLIST_SONG = 'ADD_PLAYLIST_SONG';
   export interface AddPlaylistSongPayLoad extends StationIdPayload, BaseUserPayload, SongPayload {}
 

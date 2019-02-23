@@ -10,7 +10,12 @@ export const useStyles = makeStyles(({ palette, spacing }: Theme) => ({
   thumbnail: {
     width: '100%',
     height: '100%',
-    objectFit: 'cover'
+    objectFit: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   overlayContainer: {
     position: 'absolute',
@@ -22,5 +27,10 @@ export const useStyles = makeStyles(({ palette, spacing }: Theme) => ({
     backgroundColor: 'inherit',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  text: {
+    padding: spacing.largeUnit,
+    backgroundColor: palette.common.transparent(0.3),
+    color: palette.common.white
   }
 }));

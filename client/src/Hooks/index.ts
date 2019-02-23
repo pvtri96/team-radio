@@ -1,3 +1,4 @@
+export * from './useInterval';
 export * from './useToggle';
 export * from './usePrevious';
 export * from './useWindowResizeEffect';

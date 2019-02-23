@@ -43,9 +43,10 @@ export class RealTimeStationPlayerManager {
     if (!this.playlist[0]) return;
     try {
       this.playing = this.pickPlayingSong();
-
-      // In normal case, start the player base on playing value
+      // Check if the playing should be played
+      await this.checkWhetherToSkipSong(this.playing.song.id, this.playing.song.upVotes, this.playing.song.downVotes);
       this.clearPlayerTimeout();
+      // In normal case, start the player base on playing value
       // start the next song timeout with song duration
       let timeout = this.playing.song.duration;
       // Then calculate the actual remain time of the song
@@ -141,6 +142,7 @@ export class RealTimeStationPlayerManager {
       song.upVotes = [...song.upVotes, user.id];
     }
     await this.playlistSongCRUDService.updateVotes(songId, song.upVotes, song.downVotes);
+    this.checkWhetherToSkipSong(songId, song.upVotes, song.downVotes);
     return true;
   }
 
@@ -154,7 +156,38 @@ export class RealTimeStationPlayerManager {
       song.downVotes = [...song.downVotes, user.id];
     }
     await this.playlistSongCRUDService.updateVotes(songId, song.upVotes, song.downVotes);
+    this.checkWhetherToSkipSong(songId, song.upVotes, song.downVotes);
     return true;
+  }
+
+  public async checkWhetherToSkipSong(songId: string, upVotes: string[], downVotes: string[]) {
+    if (this.playing && this.playing.song.id === songId) {
+      this.playing.song.upVotes = upVotes;
+      this.playing.song.downVotes = downVotes;
+      // TODO: Should we publish new changed player song?
+      /**
+       * The skip song rule will only apply to the votes of online users
+       * offline users or anonymous user are not counted
+       */
+      const onlineDownVotes = downVotes.filter(userId => {
+        return !!this.parent.onlineUsers.find(user => userId === user.id);
+      });
+      const onlineUpVotes = upVotes.filter(userId => {
+        return !!this.parent.onlineUsers.find(user => userId === user.id);
+      });
+      /**
+       * The comparision will be active if downVotes count is more than upVotes
+       */
+      if (onlineDownVotes.length - onlineUpVotes.length > 0) {
+        await this.parent.publish<StationTopic.SkipPlayerSongPayLoad>(StationTopic.SKIP_PLAYER_SONG, {
+          isSkipping: true,
+          songId: this.playing.song.id
+        });
+        await sleep(5000);
+        await this.stop();
+        await this.restart();
+      }
+    }
   }
 
   private async nextByPickingRandomSong(): Promise<void> {

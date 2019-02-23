@@ -21,6 +21,7 @@ const SUBSCRIPTION = gql`
       startedAt
       playlistCount
       nextSongThumbnail
+      isSkipping
     }
   }
 `;

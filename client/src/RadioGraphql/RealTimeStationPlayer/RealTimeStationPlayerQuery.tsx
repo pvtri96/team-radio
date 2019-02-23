@@ -20,6 +20,7 @@ export const QUERY = gql`
       startedAt
       playlistCount
       nextSongThumbnail
+      isSkipping
     }
   }
 `;
@@ -34,6 +35,7 @@ export interface Player {
   readonly currentlyPlayingAt?: number;
   readonly playlistCount: number;
   readonly nextSongThumbnail?: string;
+  readonly isSkipping: boolean;
 }
 
 export interface Song {

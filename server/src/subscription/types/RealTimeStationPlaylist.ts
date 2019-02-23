@@ -13,12 +13,15 @@ export class RealTimeStationPlaylist {
   @Field(type => String, { nullable: true })
   public currentPlayingSongId: string | null = null;
 
-  static fromRealTimeStationPlayerManager(manager: RealTimeStationPlayerManager): RealTimeStationPlaylist {
+  static fromRealTimeStationPlayerManager(
+    manager: RealTimeStationPlayerManager,
+    currentPlayingSongId?: string
+  ): RealTimeStationPlaylist {
     const instance = new RealTimeStationPlaylist();
     instance.playlist = manager.playlist;
     instance.currentlyPlayingAt = manager.getCurrentlyPlayingAt();
     if (manager.playing) {
-      instance.currentPlayingSongId = manager.playing.song.id;
+      instance.currentPlayingSongId = currentPlayingSongId || manager.playing.song.id;
     }
     return instance;
   }

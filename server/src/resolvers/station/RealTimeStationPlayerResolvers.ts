@@ -1,5 +1,5 @@
 import { RealTimeStationPlayer, RealTimeStationsManager, StationTopic } from 'subscription';
-import { Arg, Query, Resolver, Subscription } from 'type-graphql';
+import { Arg, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { Inject } from 'typedi';
 import { BaseResolver } from '../BaseResolver';
 
@@ -20,11 +20,19 @@ export class RealTimeStationPlayerResolver extends BaseResolver<RealTimeStationP
 
   @Subscription(returns => RealTimeStationPlayer, {
     name: 'onStationPlayerChanged',
-    topics: [StationTopic.UPDATE_PLAYER_SONG],
+    topics: [StationTopic.UPDATE_PLAYER_SONG, StationTopic.SKIP_PLAYER_SONG],
     filter: ({ args, payload }) => payload.stationId === args.stationId,
     description: 'Subscribe on update player song player event of station player manager'
   })
-  public subscribeStationPlayer(@Arg('stationId') stationId: string): RealTimeStationPlayer {
-    return RealTimeStationPlayer.fromRealTimeStationPlayerManager(this.manager.findStation(stationId).player);
+  public subscribeStationPlayer(
+    @Root() payload: StationTopic.SkipPlayerSongPayLoad | unknown,
+    @Arg('stationId') stationId: string
+  ): RealTimeStationPlayer {
+    let isSkipping = false;
+    if ((payload as StationTopic.SkipPlayerSongPayLoad).isSkipping) isSkipping = true;
+    return RealTimeStationPlayer.fromRealTimeStationPlayerManager(
+      this.manager.findStation(stationId).player,
+      isSkipping
+    );
   }
 }

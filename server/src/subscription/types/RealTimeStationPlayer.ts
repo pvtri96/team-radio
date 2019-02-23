@@ -20,7 +20,13 @@ export class RealTimeStationPlayer {
   @Field(type => String, { nullable: true })
   public nextSongThumbnail: string | null;
 
-  static fromRealTimeStationPlayerManager(manager: RealTimeStationPlayerManager): RealTimeStationPlayer {
+  @Field(type => Boolean)
+  public isSkipping: boolean = false;
+
+  static fromRealTimeStationPlayerManager(
+    manager: RealTimeStationPlayerManager,
+    isSkipping: boolean = false
+  ): RealTimeStationPlayer {
     const player = new RealTimeStationPlayer();
     if (manager.playing) {
       player.playing = manager.playing.song;
@@ -32,6 +38,7 @@ export class RealTimeStationPlayer {
     if (!player.playing && player.playlistCount > 0) {
       player.nextSongThumbnail = manager.playlist[0].highQualityThumbnail || manager.playlist[0].thumbnail;
     }
+    player.isSkipping = isSkipping;
     return player;
   }
 }
